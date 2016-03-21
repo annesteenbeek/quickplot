@@ -1,0 +1,16 @@
+{
+  "author": "anne",
+  "name": "nodeSerialPlot",
+  "version": "0.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.1.0",
+    "serialport": "*",
+    "socket.io": "^0.9.16",
+    "wiredep": "^4.0.0"
+  },
+  "scripts": {
+    "start": "node app"
+  }
+}

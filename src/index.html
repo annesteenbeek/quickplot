@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <!-- bower:css -->
+  <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+  <!-- endbower -->
+  <style> 
+    .row{
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body ng-app="MyApp" ng-controller="nodeSerial">
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <form class="navbar-form navbar-left">
+         <div class="input-group">
+           <select id="portSelector" ng-click="serialRefresh()" ng-model="selectedPort" class="form-control">
+            <option value="{{a}}"ng-repeat="a in ports">{{a}}</option>
+          </select>
+          <span class="input-group-btn" ng-switch on="isOpen">
+          <button ng-switch-when="false" ng-click="openSerial()"class="btn btn-default form-control">Open Serial</button>
+          <button ng-switch-when="true" ng-click="closeSerial()"class="btn btn-default active form-control">Close Serial</button>
+          </span>
+        </div>
+      </form>
+    </li>
+  </div>
+</nav>
+
+<div class="container" style="margin-top: 20px">
+  <div class="page-header">
+    <h1>Serial Plotter</h1>
+  </div>
+  <div class="col-md-2">
+    <div class="row" ng-repeat="(key, value) in PIDparameters">
+      <h4>{{key}}</h4>
+      <form ng-submit="sendPID(key)" class="form-inline">
+      <div class="input-group">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="button" ng-click="sendPID(key)">Send</button>
+        </span>
+        <input id="spinner{{key}}" type="text" class="form-control" placeholder="value" ng-model="PIDparameters[key]">
+      </div><!-- /input-group -->
+      </form>
+    </div><!-- /row -->
+  </div>
+  <div class="col-md-10">
+    <div class="row" ng-repeat="key in keys">
+      <div class="col-md-8">
+        <h3>{{key}}</h3>
+        <canvas class="center-block" id="{{key}}" width="400" height="150"></canvas>
+        <div class="clearfix"></div><!-- /.clearfix -->
+        <div class="row">
+          <div class="col-md-10">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-addon">Min</span>
+                  <input type="text" class="form-control" ng-model="smoothieObj[key].options.minValue"
+                  placeholder='{{smoothieObj[key].currentVisMinValue | number:3}}'
+                  ng-change="rangeChange(key)">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group">
+                  <span class="input-group-addon">Max</span>
+                  <input type="text" class="form-control" ng-model="smoothieObj[key].options.maxValue"
+                  placeholder='{{smoothieObj[key].currentVisMinValue+smoothieObj[key].currentValueRange | number:3}}'
+                  ng-change="rangeChange(key)">
+                </div>
+              </div>
+          </div>
+        </div><!-- /.row -->
+      </div>
+      <div class="col-md-2">
+        <a class="btn btn-primary" ng-click="getCSV(key)">Download {{key}}</a>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- bower:js -->
+<script src="bower_components/smoothie/smoothie.js"></script>
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/jquery/dist/jquery.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="bower_components/socket.io-client/dist/socket.io.js"></script>
+<!-- endbower -->
+<script type="application/javascript" src="script.js"></script>
+</body>
+</html>
