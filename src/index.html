@@ -19,16 +19,24 @@
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
       <div class="navbar-header">
-        <form class="navbar-form navbar-left">
-         <div class="input-group">
-           <select id="portSelector" ng-click="serialRefresh()" ng-model="selectedPort" class="form-control">
+        <form class="navbar-form navbar-left form-inline">
+         <div class="form-group">
+         <label for="portSelector">Port</label>
+           <select id="portSelector" ng-click="serialRefresh()" ng-model="selectedPort" class="form-control" ng-disabled="isOpen">
             <option value="{{a}}"ng-repeat="a in ports">{{a}}</option>
           </select>
-          <span class="input-group-btn" ng-switch on="isOpen">
-          <button ng-switch-when="false" ng-click="openSerial()"class="btn btn-default form-control">Open Serial</button>
-          <button ng-switch-when="true" ng-click="closeSerial()"class="btn btn-default active form-control">Close Serial</button>
-          </span>
         </div>
+        <div class="form-group">
+        <label for="baudSelector">Baudrate</label>
+           <select id="baudSelector" ng-model="setBaudrate" ng-options="a.name for a in baudrates" class="form-control" ng-disabled="isOpen">
+          </select>
+        </div>
+        <div class="input-group">
+          <span class="input-group-btn" ng-switch on="isOpen">
+            <button ng-switch-when="false" ng-click="openSerial()"class="btn btn-default form-control">Open Serial</button>
+            <button ng-switch-when="true" ng-click="closeSerial()"class="btn btn-default active form-control">Close Serial</button>
+          </span>
+        </div><!-- /.input-group -->
       </form>
     </li>
   </div>

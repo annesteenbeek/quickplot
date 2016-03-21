@@ -37,6 +37,21 @@ app.controller('nodeSerial', function($scope, socket){
   $scope.smoothieObj = {};
   $scope.smoothieLines = {};
   $scope.colors = ["#0000FF", "#00FF00", "#FF0000", "#00FFFF", "#FF00FF", "#FFFF00"];
+  $scope.baudrates = [
+    {id:1, name: "300"},
+    {id:2, name: "600"},
+    {id:3, name: "1200"},
+    {id:4, name: "2400"},
+    {id:5, name: "4800"},
+    {id:6, name: "9600"},
+    {id:7, name: "14400"},
+    {id:8, name: "19200"},
+    {id:9, name: "28800"},
+    {id:10, name: "38400"},
+    {id:11, name: "57600"},
+    {id:12, name: "115200"}
+  ];
+  $scope.setBaudrate = $scope.baudrates[5];
 
   socket.on('serialPorts', function (input){
     console.log(input);
@@ -45,11 +60,11 @@ app.controller('nodeSerial', function($scope, socket){
 
   socket.on("openedSerial", function (input){
     console.log("opened serialport: "+input);
-    $scope.isOpen = true;
     var dropdown = document.getElementById('portSelector');
     setTimeout(function(){ // wait to set value to allow angular to create portlist
       dropdown.value = input;
     },500);
+    $scope.isOpen = true;
     socket.emit('getPIDValues');
     // start smoothie graphs in case they were stopped
     for(var key in $scope.smoothieObj){
@@ -75,7 +90,8 @@ app.controller('nodeSerial', function($scope, socket){
   socket.on("serialData", function (input){
     var key = input.shift();
     var data = input;
-      if(!($scope.keys.indexOf(key)>-1)){ // if new key value, creat new data table
+    if(!(key.indexOf("�") > -1)) { // result of incorrect baud rate
+      if(!($scope.keys.indexOf(key)>-1) && !(key==="")){ // if new key value, creat new data table
         $scope.keys.push(key);
         // connect smoothie object to html canvas
         // create new smoothie chart and store in object by key
@@ -113,6 +129,9 @@ app.controller('nodeSerial', function($scope, socket){
           }
         })
       };
+    } else {
+      Console.log("incorrect data, most likely result of incorrect baudrate");
+    }
   });
 
   // allow changing back to autoscale
@@ -130,25 +149,6 @@ app.controller('nodeSerial', function($scope, socket){
     socket.emit("stopAll");
     console.log("stopping");
   }
-
-// --------------- PID tuning -------------
-// Reference for future parameter tuning 
-// $scope.placePIDValues = function(data){
-//   var i = 0;
-//   for(var i in parameters){
-//     $scope.PIDparameters[parameters[i]] = data[i];
-//   }
-//   console.log($scope.PIDparameters);
-// }
-
-
-// $scope.sendPID = function(parameter){
-//   console.log("setting " + parameter + " " +  $scope.PIDparameters[parameter]);
-//   socket.emit('setParameter', [parameter, $scope.PIDparameters[parameter]]);
-//   setTimeout(function(){
-//     socket.emit('getPIDValues');
-//   }, 500);
-// }
 
 // --------------- Download csv ------------
 $scope.getCSV = function (name){
@@ -190,8 +190,9 @@ $scope.getCSV = function (name){
 
   $scope.openSerial = function(){
     // use jquery to get selected text because of issues with angular after page reload
-    console.log("Opening: "+$("#portSelector option:selected").text());
-    socket.emit('openSerial', $("#portSelector option:selected").text())
+
+    console.log("Opening: "+ $("#portSelector option:selected").text() + " with baudrate: " + $("#baudSelector option:selected").text());
+    socket.emit('openSerial',{port: $("#portSelector option:selected").text(), baud: $("#baudSelector option:selected").text()});
   };
   $scope.closeSerial = function(){
     console.log("Closing serialport");

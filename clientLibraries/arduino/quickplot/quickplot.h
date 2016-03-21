@@ -12,14 +12,12 @@
 class quickplot {
     public:
         quickplot(HardwareSerial &mySerial);
-        void plotValue(String name, int &value, int interval);
-        void plotValue(String name, float &value, int interval);
-        void plotValue(String name, double &value, int interval);
-        void plotValue(String name, bool &value, int interval);
-        void send();
+        // void plotValue(String name, int value, int interval);
+        void plotValue(String name, float value, int interval);
+        // void plotValue(String name, double value, int interval);
+        // void plotValue(String name, bool value, int interval);
 
     private:
-        void setPlotData(String name, int interval);
 };
 
 #endif

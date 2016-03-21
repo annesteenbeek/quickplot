@@ -8,88 +8,69 @@
 #include "quickplot.h"
 
 unsigned long time;
-int structSize = 10; // value to set the size of the plots structure 
 HardwareSerial* serial;
+int plotSize = 0; // amount of items to plot
 
-// create structure to store different types of values to keep track
-enum ElementType {et_int, et_flt, et_dbl, et_bol};
-struct Element {
-  ElementType type;
-  // union {
-    int       i;
-    float     f;
-    double    d;
-    bool      b;
-  // }
+union plotTypes {
+  int i;
+  float f;
+  double d;
+  bool b;
+};
+
+struct plotData {
   String name;
-  int interval;
   unsigned long lastPlot;
 };
 
-
-struct Element *plotData = (struct Element*) malloc(sizeof(struct Element) * structSize);
-int objectCount = 0; // keeps track of amount of values to plot
+plotData plotList[10];
 
 quickplot::quickplot(HardwareSerial &mySerial) {
     serial = &mySerial; //operate on the adress of print
 }
 
+// use function overloading to handle multiple data types
+// void plotValue(String name, int value, int interval) {
+//   double _value = (double) value;
+//   plotValue(name, _value, interval);
+// }
+
+// void plotValue(String name, float value, int interval) {
+//   double _value = (double) value;
+//   plotValue(name, _value, interval);
+// }
+
+// void plotValue(String name, bool value, int interval) {
+//   double _value = (double) value;
+//   plotValue(name, _value, interval);
+// }
+
 // save values and their respective types using functino overloading
-void quickplot::plotValue(String name, int &value, int interval) {
-    plotData[objectCount].type = et_int;
-    plotData[objectCount].i = value;
-    setPlotData(name, interval);
-
-}
-
-void quickplot::plotValue(String name, float &value, int interval) {
-    plotData[objectCount].type = et_flt;
-    plotData[objectCount].f = value;
-    setPlotData(name, interval);
-
-}
-
-void quickplot::plotValue(String name, double &value, int interval) {
-    plotData[objectCount].type = et_dbl;
-    plotData[objectCount].d = value;
-    setPlotData(name, interval);
-
-}
-
-void quickplot::plotValue(String name, bool &value, int interval) {
-    plotData[objectCount].type = et_bol;
-    plotData[objectCount].b = value;
-    setPlotData(name, interval);
-
-}
-
-void quickplot::setPlotData(String name, int interval) {
-    plotData[objectCount].name = name;
-    plotData[objectCount].interval = interval;
-    plotData[objectCount].lastPlot = millis();
-    objectCount++;
-
-}
-
-void quickplot::send() {
-    time = millis();
-    for (int i = 0; i < objectCount; i++) {
-        // Check if it is time to send current value
-        if (time - plotData[i].lastPlot >= plotData[i].interval) {
-            serial -> print("name ");
-            serial -> print(plotData[i].name);
-            serial -> print(" value ");
-            // get the value to print according to their type
-            switch(plotData[i].type) {
-              case et_int: serial -> print(plotData[i].i); break;
-              case et_flt: serial -> print(plotData[i].f); break;
-              case et_dbl: serial -> print(plotData[i].d); break;
-              case et_bol: serial -> print(plotData[i].b); break;
-            }
-            serial -> print("\n\t");
-
-            plotData[i].lastPlot = time; // set new prev time
-        }
+void quickplot::plotValue(String name, float value, int interval) {
+  // check if new item
+  bool plotExists = false;
+  time = millis();
+  for (int i = 0; i < plotSize; i++) {
+    if (plotList[i].name == name) {
+      // plot exists
+      plotExists = true;
+      // check if it is time to plot
+      if (time - plotList[i].lastPlot >= interval) {
+        // plot the value
+        // serial -> print("name ");
+        serial -> print(plotList[i].name);
+        serial -> print(" ");
+        serial -> print(value);
+        serial -> print("\n\t");
+        plotList[i].lastPlot = time;
+      }
     }
-
+  }
+  // plot does not exists and entry needs to be added
+  if (!plotExists) {
+    // TODO increment structure memory if size is exceded
+    plotList[plotSize].name = name;
+    plotList[plotSize].lastPlot = millis();
+    plotSize++; 
+  }
 }

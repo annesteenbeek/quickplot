@@ -11,6 +11,6 @@
     "wiredep": "^4.0.0"
   },
   "scripts": {
-    "start": "node app"
+    "start": "node src/app"
   }
 }

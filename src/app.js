@@ -17,7 +17,7 @@ var storeData = {};
 // -------- Setup serial --------
 var serialName = ' '; // start with empty port
 var serial = new serialport.SerialPort(serialName,{
-    baudRate: 9600,
+	baudRate: 9600,
     dataBits: 8,
     parity: 'none',
     stopBits: 1,
@@ -45,8 +45,10 @@ io.sockets.on('connection', function (socket) {
 		});
 	});
 
-	socket.on('openSerial', function(port){
-		openSerial(port);
+	socket.on('openSerial', function (serialInfo){
+		var port = serialInfo.port;
+		var baudrate = serialInfo.baud;
+		openSerial(port, baudrate);
 	});
 
 	socket.on('closeSerial', function(){
@@ -59,28 +61,9 @@ io.sockets.on('connection', function (socket) {
 			serial.write("stop");
 		}
 	})
-
-	// Reference for future parameter tuning
-	// socket.on('getPIDValues', function(){
-	// 	if (serial.isOpen()) {
-	// 		serial.write('getPIDValues\n');
-	// 	} else {
-	// 		console.log("serial not open");
-	// 	}
-	// });
-
-	// socket.on('setParameter', function(data){
-	// 	if (serial.isOpen()) {
-	// 		serial.write(data[0] + " " + data[1] + "\n");
-	// 	} else {
-	// 		console.log("serial not open");
-	// 	}
-	// })
-
 });
 
 function parseSerial(data){
-	// console.log(data);
 	if (skipLines==10){ // lines to skip to prevent broken lines at startup
 		data = data.split("\t"); // split data in array by tabs
 		data.forEach(function (dataset){
@@ -110,18 +93,19 @@ function getSerialPorts(callback){
 	});
 };
 
-function openSerial(portName){
+function openSerial(portName, baudrate){
 	if (portName != null) { // check if no empty port has ben send
 		if(serial.isOpen()){
 			serial.close();
 		}
 		serial.path = portName;
+		serial.options.baudRate = baudrate;
 		serial.open(function (error) { // open the port and handle possible errors
 		  	if ( error ) {
 		    	console.log('failed to open serial: '+error);
 		    	io.sockets.emit('failed', error);
 		  	} else {
-			    console.log('opened Serial');
+			    console.log('opened Serial with baudrate ' + serial.options.baudRate);
 			    io.sockets.emit('openedSerial', serial.path)
 		    };
 		});
