@@ -19,4 +19,6 @@ void loop() {
     // plotter.plotValue("Data2", data2, 100);
     plotter.plotValue("value", val, 0);
     // plotter.plotValue("AllData", data, 50);
+    Serial.print("Sines "); Serial.print(data1); Serial.print(" "); 
+    Serial.print(data2); Serial.print("\t");
 }
