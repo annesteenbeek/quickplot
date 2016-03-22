@@ -53,7 +53,7 @@ Serial.print("\n\t");
 ![missing screenshot](screenshot.png?raw=true "Basic plot of test data")
 
 ## TODO
-- [ ] improve current basic arduino library with multiple data types
+- [x] improve current basic arduino library with multiple data types
 - [ ] more robust serial transmission
 - [ ] track multiple values in one graph
 - [ ] pushing values to the micro controller
