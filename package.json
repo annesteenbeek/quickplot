@@ -1,16 +1,29 @@
 {
-  "author": "anne",
-  "name": "nodeSerialPlot",
+  "author": "Anne Steenbeek",
+  "name": "quickplot",
   "version": "0.0.0",
   "description": "",
-  "main": "app.js",
+  "node-main": "app.js",
+  "main": "index.html",
   "dependencies": {
-    "express": "^4.1.0",
-    "serialport": "*",
-    "socket.io": "^0.9.16",
-    "wiredep": "^4.0.0"
+    "express": "4.1.0",
+    "serialport": "2.0.5",
+    "socket.io": "0.9.16",
+    "wiredep": "4.0.0"
   },
+  "window": {
+    "title": "Quickplot",
+    "width": 1000,
+    "height": 600,
+    "toolbar": false,
+    "frame": true,
+    "resizable": true
+    },
   "scripts": {
     "start": "node src/app"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.2",
+    "grunt-nw-builder": "2.0.0"
   }
 }
