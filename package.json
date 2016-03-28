@@ -3,7 +3,8 @@
   "name": "quickplot",
   "version": "0.0.0",
   "description": "",
-  "main": "index.html",
+  "node-main": "src/app.js",
+  "main": "src/index.html",
   "dependencies": {
     "express": "4.1.0",
     "serialport": "2.0.5",
