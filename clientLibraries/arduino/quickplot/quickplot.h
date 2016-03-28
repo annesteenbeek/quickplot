@@ -44,7 +44,7 @@ class quickplot {
                     // serial -> print(" ");
                   // }
                 // }
-                serial -> print("\t\n");
+                serial -> print("\n");
                 plotList[i].lastPlot = time;
               }
             }
