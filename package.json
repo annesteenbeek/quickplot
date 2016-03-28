@@ -3,7 +3,6 @@
   "name": "quickplot",
   "version": "0.0.0",
   "description": "",
-  "node-main": "app.js",
   "main": "index.html",
   "dependencies": {
     "express": "4.1.0",
@@ -15,7 +14,7 @@
     "title": "Quickplot",
     "width": 1000,
     "height": 600,
-    "toolbar": false,
+    "toolbar": true,
     "frame": true,
     "resizable": true
     },
