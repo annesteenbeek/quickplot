@@ -1,6 +1,6 @@
 # quickplot
 Simple node tool to plot serial data for arduino. 
-Made possible by the great [node-serialport](https://github.com/voodootikigod/node-serialport)
+Made possible by the awsome [node-serialport](https://github.com/voodootikigod/node-serialport) library!
 
 ## installation
 To install this package simply clone this repo and then to get started:
@@ -10,10 +10,22 @@ $ bower install # install bower files
 $ npm start # to run the plotter
 ```
 
+## building
+Comming soon
+
 ## Providing plotting data
 Use the provided arduino library to plot the data.
 Basicly all this does is print using a simple specified format but with the library you can also set a specified interval.
 ### using the provided library
+First initiate quicplot object
+```
+quickplot plotter([serial port reference]);
+```
+And to send data to quickplot simply add the desired value in the loop:
+```
+plotter.plotValue([Desired name of plot], [pointer to variable], [interval]);
+```
+
 
 #### simple arduino example
 ```
@@ -55,10 +67,10 @@ Serial.print("\n\t");
 ## TODO
 - [x] improve current basic arduino library with multiple data types
 - [x] single executable
-- [ ] more robust serial transmission
-- [ ] track multiple values in one graph
+- [x] more robust serial transmission
+- [x] track multiple values in one graph
+- [ ] Download values as .csv files
 - [ ] pushing values to the micro controller
 - [ ] add mbed support
-- [ ] dragging, dropping and removing of plots
 - [ ] use more advanced plotting library (values on hover etc...)
 
