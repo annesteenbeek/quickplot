@@ -1,6 +1,6 @@
 {
-  "name": "nodePlot",
-  "version": "0.0.0",
+  "name": "quickplot",
+  "version": "0.0.1",
   "authors": [
     "anne"
   ],
@@ -8,6 +8,7 @@
     "smoothie": "*",
     "angular": "*",
     "bootstrap": "3.3.4",
-    "jquery": "*"
+    "jquery": "*",
+    "angular-bootstrap-multiselect": "^0.3.5"
   }
 }

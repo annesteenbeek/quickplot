@@ -1,10 +1,17 @@
 'use strict';
 
-  var app = angular.module('quickplot', []);
+// Load native UI library
+var gui = require('nw.gui'); //or global.window.nwDispatcher.requireNwGui() (see https://github.com/rogerwang/node-webkit/issues/707)
 
+// Get the current window
+var win = gui.Window.get();
+
+var app = angular.module('quickplot', ["ui.multiselect"]);
 
 app.controller('serial', function($scope){
-  var storageSize = 20;
+  var storageSize = 100;
+  var minEntrys = 3; // minimum data points for tracked value to be real
+
   // -------- Setup serial --------
   var serialport = require("serialport");
   $scope.serialName = ' '; // start with empty port
@@ -18,79 +25,104 @@ app.controller('serial', function($scope){
   }, false); // don't open serialport at startup.
 
   var serialData = {};
-  var smoothieObj = {};
+  $scope.smoothieObj = {};
   var smoothieLines = {};
   var colors = ["#0000FF", "#00FF00", "#FF0000", "#00FFFF", "#FF00FF", "#FFFF00"];
 
   
   $scope.dataTables = {};
   $scope.isOpen = false;
-  $scope.ports = ["..."];
+  $scope.ports = [];
   $scope.keys = [];
 
   $scope.baudrates = [
-    {id:1, name: "300"},
-    {id:2, name: "600"},
-    {id:3, name: "1200"},
-    {id:4, name: "2400"},
-    {id:5, name: "4800"},
-    {id:6, name: "9600"},
-    {id:7, name: "14400"},
-    {id:8, name: "19200"},
-    {id:9, name: "28800"},
-    {id:10, name: "38400"},
-    {id:11, name: "57600"},
-    {id:12, name: "115200"}
+   "300",
+   "600",
+   "1200",
+   "2400",
+   "4800",
+   "9600",
+   "14400",
+   "19200",
+   "28800",
+   "38400",
+   "57600",
+   "115200"
   ];
   $scope.setBaudrate = $scope.baudrates[5];
-
+  $scope.plotLines = {};
   // ------------ Inputs ----------------
 
   var storeData = function(data) {
     var key = data.shift();
     var data = data[0];
     if(
-      key.indexOf("�") > -1 && // probably incorrect baudrate, exit function
-      !isNaN(parseFloat(data)) && // not a number
-      isFinite(data))
+      key.indexOf("�") > -1 || // probably incorrect baudrate, exit function
+      isNaN(parseFloat(data)) || // not a number
+      !isFinite(data))
     {
       return; 
     }
-    if (!($scope.keys.indexOf(key) > -1)) { // key is new
+    if (typeof serialData[key] === "undefined") { // key is new
       serialData[key] = Array();
-      $scope.keys.push(key);
     } else {
-      if (serialData[key].length > storageSize) {
+      // make sure entry is not an anomaly
+      if (serialData[key].length > minEntrys && ($scope.keys.indexOf(key) <= -1)) { 
+        $scope.keys.push(key);
+    }
+      if (serialData[key].length + 1 > storageSize) {
         serialData[key].shift();
       }
     }
     serialData[key].push(Number(data));
-    // console.log(serialData[key].values);
   }
 
   $scope.plotData = function(key) {
     setTimeout(function(){  // use timeout to make sure ng-repeat has finished for new key
       plotData(key);
-    }, 200);
+    }, 100);
 
   }
 
   var plotData = function(key) {
+    // needed to set correct multiselect values... (dirty)
+    $scope.$apply();
+    $scope.keys.forEach(function(entry){
+      $scope.plotLines[entry] = [];
+      $scope.$apply();
+    })
     // create new smoothie chart and store in object by key
-    smoothieObj[key] = new SmoothieChart({millisPerPixel:43,
+    $scope.smoothieObj[key] = new SmoothieChart({millisPerPixel:43,
       grid:{fillStyle:'#f3f3f3'},
       labels:{fillStyle:'#000000'},
       timestampFormatter:SmoothieChart.timeFormatter
     });
     // connect smoothie to canvas
-    smoothieObj[key].streamTo(document.getElementById(key));
+    $scope.smoothieObj[key].streamTo(document.getElementById(key));
 
     // create new timeseries for key value
     smoothieLines[key] = new TimeSeries;
-    // add line to smoothie object
-    smoothieObj[key].addTimeSeries(smoothieLines[key], 
-      {lineWidth:2,strokeStyle:colors[0]});
+    
 
+    // watch for line changes
+    $scope.$watch(function($scope) {
+        return $scope.plotLines[key];
+    }, function(newVal, oldVal) {
+      var removed = $(oldVal).not(newVal).get();
+      var added = $(newVal).not(oldVal).get();
+      console.log("removed: " + removed);
+      console.log("added: " + added);
+      removed.forEach(function(entry) {
+        $scope.smoothieObj[key].removeTimeSeries(smoothieLines[entry]);
+      });
+      added.forEach(function(entry) {
+        // get color for this key
+        var colorIndex = ($scope.keys.indexOf(entry) % (colors.length - 1));
+
+        $scope.smoothieObj[key].addTimeSeries(smoothieLines[entry], 
+          {lineWidth:2,strokeStyle:colors[colorIndex]});
+      })
+    }, true);
 
     $scope.$watch(function($scope) {
         return serialData[key];
@@ -98,17 +130,31 @@ app.controller('serial', function($scope){
       var newValue = serialData[key][serialData[key].length-1];
       smoothieLines[key].append(new Date().getTime(), newValue);
     }, true);
+
+    // needed to set correct multiselect values... (dirty)
+    $scope.$apply();
+    $scope.keys.forEach(function(entry){
+      $scope.plotLines[entry] = [entry];
+      $scope.$apply();
+    })
+
   }
 
   // allow changing back to autoscale
   $scope.rangeChange = function(graphKey){
-    var obj = smoothieObj[graphKey].options;
+    var obj = $scope.smoothieObj[graphKey].options;
     if(obj.minValue==""){
       delete obj.minValue;
     }
     if(obj.maxValue==""){
       delete obj.maxValue;
     }
+  }
+
+  $scope.removeKey = function(key) {
+    var index = $scope.keys.indexOf(key);
+    $scope.keys.splice(index, 1);
+    console.log("removed " + key + " from " + $scope.keys);
   }
 
   // --------------- Download csv ------------
@@ -142,6 +188,7 @@ app.controller('serial', function($scope){
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      console.log("downlaoded");
   };
 
   // --------------- Serial port functions -------------
@@ -169,6 +216,7 @@ app.controller('serial', function($scope){
     if (portName != null) { // check if no empty port has ben send
       serial.path = portName;
       serial.options.baudRate = baudrate;
+      $scope.closeSerial(); // make sure serial is closed bevore opening it
       serial.open(function (error) { // open the port and handle possible errors
           if ( error ) {
             console.log('failed to open serial: ' + error);
@@ -177,14 +225,14 @@ app.controller('serial', function($scope){
             serial.flush(); // flush serial for old data
             $scope.isOpen = true;
             // start smoothie graphs in case they were stopped
-            for(var key in smoothieObj){
-              smoothieObj[key].start();
+            for(var key in $scope.smoothieObj){
+              $scope.smoothieObj[key].start();
             }
           };
       });
 
       serial.on('data', function (data){ // parse all the serial data
-        storeData(data.split(" "));
+        storeData(data.split("\t"));
       }); 
 
       serial.on('error', function(error){ // handle possible serial error
@@ -208,8 +256,8 @@ app.controller('serial', function($scope){
       serial.close();
       console.log("Closed serialPort.");
       $scope.isOpen = false;
-      for(var key in smoothieObj){
-        smoothieObj[key].stop();
+      for(var key in $scope.smoothieObj){
+        $scope.smoothieObj[key].stop();
       }
     };
   };
@@ -220,5 +268,18 @@ app.controller('serial', function($scope){
 
   $scope.init = function() {
     $scope.getSerialPorts();
-  }
+  };
+
+  $scope.arrayToString = function(string){
+    if (typeof string !== 'undefined') {
+      return string.join(", ");
+    }
+  };
+
+  win.on('close', function() {
+    this.hide(); // Pretend to be closed already
+    $scope.closeSerial(); // make sure serial is closed.
+    console.log("We're closing...");
+    this.close(true);
+  });
 });

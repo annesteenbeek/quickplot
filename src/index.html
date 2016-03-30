@@ -10,10 +10,11 @@
   <!-- endbower -->
 
   <!-- bower:js -->
+  <script src="bower_components/jquery/dist/jquery.js"></script>
   <script src="bower_components/smoothie/smoothie.js"></script>
   <script src="bower_components/angular/angular.js"></script>
-  <script src="bower_components/jquery/dist/jquery.js"></script>
   <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <script src="bower_components/angular-bootstrap-multiselect/angular-bootstrap-multiselect.js"></script>
   <!-- endbower -->
   <script type="application/javascript" src="script.js"></script>
   <style> 
@@ -35,7 +36,7 @@
           </div>
           <div class="form-group">
             <label for="baudSelector">Baudrate</label>
-            <select id="baudSelector" ng-model="setBaudrate" ng-options="a.name for a in baudrates" class="form-control" ng-disabled="isOpen">
+            <select id="baudSelector" ng-model="setBaudrate" ng-options="rate for rate in baudrates" class="form-control" ng-disabled="isOpen">
             </select>
           </div>
           <div class="input-group">
@@ -55,7 +56,7 @@
     <div class="col-md-10">
       <div class="row" ng-repeat="key in keys">
         <div class="col-md-8">
-          <h3>{{key}}</h3>
+          <h3>&nbsp; {{arrayToString(plotLines[key])}}</h3>
           <canvas class="center-block" width="400" height="150" plotname="key" id="{{key}}" ng-init="plotData(key)">
           </canvas>
           <div class="clearfix"></div><!-- /.clearfix -->
@@ -80,6 +81,19 @@
             </div>
           </div>
         </div>
+        <multiselect
+            ng-model="plotLines[key]"
+            options="a for a in keys"  
+            data-multiple="true"                
+            scroll-after-rows="5"               
+            filter-after-rows="5"               
+            max-width="100"   
+            tabindex="-1">                      
+        </multiselect>
+<!--         <button class="btn btn-danger" ng-click="removeKey(key)">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </button> -->
+
 <!--         <div class="col-md-2">
           <a class="btn btn-primary" ng-click="getCSV(key)">Download {{key}}</a>
         </div> -->

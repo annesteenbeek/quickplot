@@ -2,11 +2,10 @@
   "author": "Anne Steenbeek",
   "name": "quickplot",
   "version": "0.0.1",
-  "description": "",
+  "description": "A super simple plotting tool used for debugging microcontrollers like arduinos",
   "main": "src/index.html",
   "dependencies": {
-    "serialport": "2.0.5",
-    "wiredep": "4.0.0"
+    "serialport": "2.0.5"
   },
   "window": {
     "title": "Quickplot",
@@ -14,14 +13,16 @@
     "height": 600,
     "toolbar": false,
     "frame": true,
-    "resizable": true
-    },
+    "resizable": true,
+    "icon": "src/favicon.png"
+  },
   "scripts": {
     "start": "nw ./"
   },
   "devDependencies": {
-    "nw": "0.12.0",
     "grunt": "^0.4.2",
-    "grunt-nw-builder": "2.0.0"
+    "grunt-nw-builder": "2.0.0",
+    "grunt-wiredep": "^2.0.0",
+    "nw": "0.12.0"
   }
 }

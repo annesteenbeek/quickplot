@@ -54,11 +54,11 @@ Serial.print("\n\t");
 
 ## TODO
 - [x] improve current basic arduino library with multiple data types
+- [x] single executable
 - [ ] more robust serial transmission
 - [ ] track multiple values in one graph
 - [ ] pushing values to the micro controller
 - [ ] add mbed support
-- [ ] single executable
 - [ ] dragging, dropping and removing of plots
 - [ ] use more advanced plotting library (values on hover etc...)
 

@@ -36,7 +36,7 @@ class quickplot {
                 // plot the value
                 // serial -> print("name ");
                 serial -> print(plotList[i].name);
-                serial -> print(" ");
+                serial -> print("\t");
                 serial -> print(value);
                 // for (int j=0; j < sizeof(value); j++) {
                   // serial -> print(value[j]);
