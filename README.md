@@ -5,8 +5,15 @@ Made possible by the awsome [node-serialport](https://github.com/voodootikigod/n
 ## installation
 To install this package simply clone this repo and then to get started:
 ```
+$ git clone https://github.com/annesteenbeek/quickplot.git # get the repo
+$ cd quickplot # enter directory
 $ npm install # install node dependencies
 $ bower install # install bower files
+# the nodeSerial package needs to be rebuild for using it with NWJS
+$ npm -install -g node-pre-gyp 
+$ cd node_modules/serialport # go into the serialport directory
+$ node-pre-gyp rebuild --runtime=node-webkit --target=0.12.0
+$ cd ../.. # go back to main directory
 $ npm start # to run the plotter
 ```
 
