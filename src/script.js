@@ -1,9 +1,9 @@
 'use strict';
 
-var app = angular.module('quickplot', []);
+  var app = angular.module('quickplot', []);
 
-app.controller('nodeSerial', function($scope){
 
+app.controller('serial', function($scope){
   var storageSize = 20;
   // -------- Setup serial --------
   var serialport = require("serialport");
@@ -17,14 +17,17 @@ app.controller('nodeSerial', function($scope){
       parser: serialport.parsers.readline("\n")
   }, false); // don't open serialport at startup.
 
-  $scope.plotData = {};
+  var serialData = {};
+  var smoothieObj = {};
+  var smoothieLines = {};
+  var colors = ["#0000FF", "#00FF00", "#FF0000", "#00FFFF", "#FF00FF", "#FFFF00"];
+
+  
   $scope.dataTables = {};
   $scope.isOpen = false;
   $scope.ports = ["..."];
   $scope.keys = [];
-  $scope.smoothieObj = {};
-  $scope.smoothieLines = {};
-  $scope.colors = ["#0000FF", "#00FF00", "#FF0000", "#00FFFF", "#FF00FF", "#FFFF00"];
+
   $scope.baudrates = [
     {id:1, name: "300"},
     {id:2, name: "600"},
@@ -43,75 +46,63 @@ app.controller('nodeSerial', function($scope){
 
   // ------------ Inputs ----------------
 
-  $scope.plotter = function(data) {
+  var storeData = function(data) {
     var key = data.shift();
     var data = data[0];
-    console.log("data is: " + data);
-    if (!($scope.keys.indexOf(key) > -1)) { // key is new
-      $scope.keys.push(key);
-      $scope.plotData[key] = {};
-      $scope.plotData[key].values = new Array(data); 
-
-    } else {
-      if ($scope.plotData[key].values.length > storageSize) {
-        $scope.plotData[key].values.shift();
-      }
-      $scope.plotData[key].values.push(data);
+    if(
+      key.indexOf("�") > -1 && // probably incorrect baudrate, exit function
+      !isNaN(parseFloat(data)) && // not a number
+      isFinite(data))
+    {
+      return; 
     }
-    console.log($scope.plotData[key].values);
+    if (!($scope.keys.indexOf(key) > -1)) { // key is new
+      serialData[key] = Array();
+      $scope.keys.push(key);
+    } else {
+      if (serialData[key].length > storageSize) {
+        serialData[key].shift();
+      }
+    }
+    serialData[key].push(Number(data));
+    // console.log(serialData[key].values);
   }
 
+  $scope.plotData = function(key) {
+    setTimeout(function(){  // use timeout to make sure ng-repeat has finished for new key
+      plotData(key);
+    }, 200);
 
-  // $scope.plotData = function (data){
-  //   var key = data.shift();
-  //   var data = data;
-  //   if(!(key.indexOf("�") > -1)) { // result of incorrect baud rate
-  //     if(!($scope.keys.indexOf(key)>-1) && !(key==="")){ // if new key value, creat new data table
-  //       $scope.keys.push(key);
-  //       // connect smoothie object to html canvas
-  //       // create new smoothie chart and store in object by key
-  //       $scope.smoothieObj[key] = new SmoothieChart({millisPerPixel:43,
-  //         grid:{fillStyle:'#f3f3f3'},
-  //         labels:{fillStyle:'#000000'},
-  //         timestampFormatter:SmoothieChart.timeFormatter
-  //       });
-  //       data.forEach(function (value, i){ // for each value in array create different line
-  //         $scope.dataTables[key+String(i)] = [value];
-  //       });
-  //       // create html object canvas
-  //       setTimeout(function(){  // use timeout to make sure ng-repeat has finished for new key
-  //       $scope.smoothieObj[key].streamTo(document.getElementById(key));
-  //         data.forEach(function (value, i){ // for each value in array create different line
-  //           // create new timeseries for key value
-  //           $scope.smoothieLines[key+String(i)] = new TimeSeries;
-  //           // add line to smoothie object
-  //           $scope.smoothieObj[key].addTimeSeries($scope.smoothieLines[key+String(i)], 
-  //             {lineWidth:2,strokeStyle:$scope.colors[i]});
-  //         })
-  //       }, 100);
-  //     } else {
-  //       data.forEach(function (value, i){
-  //         var dataTable = $scope.dataTables[key + String(i)];
-  //         dataTable.push(value);
-  //         var maxArrayLength = 400;
-  //         if(dataTable.length > maxArrayLength){
-  //           dataTable.shift(); // remove first element if array gets too long
-  //         } 
-  //         // prevent errors because of delay in canvas creation (first elements are still stored in csv)
-  //         // could be improved by use of buffer for the value
-  //         if(typeof $scope.smoothieLines[key + String(i)] != 'undefined'){
-  //           $scope.smoothieLines[key + String(i)].append(new Date().getTime(), value);
-  //         }
-  //       })
-  //     };
-  //   } else {
-  //     Console.log("incorrect data, most likely result of incorrect baudrate");
-  //   }
-  // };
+  }
+
+  var plotData = function(key) {
+    // create new smoothie chart and store in object by key
+    smoothieObj[key] = new SmoothieChart({millisPerPixel:43,
+      grid:{fillStyle:'#f3f3f3'},
+      labels:{fillStyle:'#000000'},
+      timestampFormatter:SmoothieChart.timeFormatter
+    });
+    // connect smoothie to canvas
+    smoothieObj[key].streamTo(document.getElementById(key));
+
+    // create new timeseries for key value
+    smoothieLines[key] = new TimeSeries;
+    // add line to smoothie object
+    smoothieObj[key].addTimeSeries(smoothieLines[key], 
+      {lineWidth:2,strokeStyle:colors[0]});
+
+
+    $scope.$watch(function($scope) {
+        return serialData[key];
+    }, function() {
+      var newValue = serialData[key][serialData[key].length-1];
+      smoothieLines[key].append(new Date().getTime(), newValue);
+    }, true);
+  }
 
   // allow changing back to autoscale
   $scope.rangeChange = function(graphKey){
-    var obj = $scope.smoothieObj[graphKey].options;
+    var obj = smoothieObj[graphKey].options;
     if(obj.minValue==""){
       delete obj.minValue;
     }
@@ -183,19 +174,17 @@ app.controller('nodeSerial', function($scope){
             console.log('failed to open serial: ' + error);
           } else {
             console.log('opened Serial with baudrate ' + serial.options.baudRate);
-            var dropdown = document.getElementById('portSelector');
+            serial.flush(); // flush serial for old data
             $scope.isOpen = true;
             // start smoothie graphs in case they were stopped
-            for(var key in $scope.smoothieObj){
-              $scope.smoothieObj[key].start();
+            for(var key in smoothieObj){
+              smoothieObj[key].start();
             }
           };
       });
 
       serial.on('data', function (data){ // parse all the serial data
-        console.log("Received: " + data);
-        // $scope.plotData(data.split(" "));
-        $scope.plotter(data.split(" "));
+        storeData(data.split(" "));
       }); 
 
       serial.on('error', function(error){ // handle possible serial error
@@ -219,14 +208,17 @@ app.controller('nodeSerial', function($scope){
       serial.close();
       console.log("Closed serialPort.");
       $scope.isOpen = false;
-      // for(var key in $scope.smoothieObj){
-      //   $scope.smoothieObj[key].stop();
-      // }
+      for(var key in smoothieObj){
+        smoothieObj[key].stop();
+      }
     };
   };
-  // ----------- at init -----------
+  
+  setInterval(function() {
+      $scope.$apply() 
+  }, 50);
+
   $scope.init = function() {
     $scope.getSerialPorts();
   }
 });
-

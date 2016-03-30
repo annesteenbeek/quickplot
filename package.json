@@ -5,16 +5,14 @@
   "description": "",
   "main": "src/index.html",
   "dependencies": {
-    "express": "4.1.0",
     "serialport": "2.0.5",
-    "socket.io": "0.9.16",
     "wiredep": "4.0.0"
   },
   "window": {
     "title": "Quickplot",
     "width": 1000,
     "height": 600,
-    "toolbar": true,
+    "toolbar": false,
     "frame": true,
     "resizable": true
     },

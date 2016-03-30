@@ -8,6 +8,14 @@
   <!-- bower:css -->
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
   <!-- endbower -->
+
+  <!-- bower:js -->
+  <script src="bower_components/smoothie/smoothie.js"></script>
+  <script src="bower_components/angular/angular.js"></script>
+  <script src="bower_components/jquery/dist/jquery.js"></script>
+  <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+  <!-- endbower -->
+  <script type="application/javascript" src="script.js"></script>
   <style> 
     .row{
       margin-top: 15px;
@@ -15,7 +23,7 @@
     }
   </style>
 </head>
-<body ng-app="quickplot" ng-controller="nodeSerial">
+<body ng-app="quickplot" ng-controller="serial" ng-init="init()">
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="navbar-header">
       <form class="navbar-form navbar-left form-inline">
@@ -48,9 +56,10 @@
       <div class="row" ng-repeat="key in keys">
         <div class="col-md-8">
           <h3>{{key}}</h3>
-          <canvas class="center-block" id="{{key}}" width="400" height="150"></canvas>
+          <canvas class="center-block" width="400" height="150" plotname="key" id="{{key}}" ng-init="plotData(key)">
+          </canvas>
           <div class="clearfix"></div><!-- /.clearfix -->
-<!--           <div class="row">
+          <div class="row">
             <div class="col-md-10">
               <div class="col-md-6">
                   <div class="input-group">
@@ -69,9 +78,6 @@
                   </div>
                 </div>
             </div>
-          </div> -->
-          <div>
-            {{plotData[key].values}}
           </div>
         </div>
 <!--         <div class="col-md-2">
@@ -80,14 +86,5 @@
       </div>
     </div>
   </div>
-
-<!-- bower:js -->
-<script src="bower_components/smoothie/smoothie.js"></script>
-<script src="bower_components/angular/angular.js"></script>
-<script src="bower_components/jquery/dist/jquery.js"></script>
-<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-<script src="bower_components/socket.io-client/dist/socket.io.js"></script>
-<!-- endbower -->
-<script type="application/javascript" src="script.js"></script>
 </body>
 </html>

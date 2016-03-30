@@ -14,7 +14,7 @@ void loop() {
     data1 = cos(((float) val)/30);
     data2 = sin(val/30);
     plotter.plotValue("AliasingTest0", data1, 100);
-//    plotter.plotValue("AliasingTest1", data1, 10);
+    plotter.plotValue("AliasingTest1", data1, 10);
     // int data [] = {data1, data2};
     // plotter.plotValue("Data2", data2, 100);
 //    plotter.plotValue("value", val, 0);

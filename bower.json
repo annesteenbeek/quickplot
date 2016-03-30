@@ -6,7 +6,6 @@
   ],
   "dependencies": {
     "smoothie": "*",
-    "socket.io-client": "~0.9.16",
     "angular": "*",
     "bootstrap": "3.3.4",
     "jquery": "*"
