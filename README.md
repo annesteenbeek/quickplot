@@ -1,7 +1,7 @@
 # Quickplot
 Simple tool to track, visualize and store Arduino serial data. 
-## Downloading
-To get started right away, you can download the packages [here](https://www.dropbox.com/sh/affs0kikeiiugiv/AABzh9CSijc8Wq6Yxoa1M7Q4a?dl=0).
+## Downloading executable
+To get started right away, you can download the packages [here](goo.gl/OQCIEx) and run them right away.
 
 (OSx version not available, since i don't have a mac available to test or build on)
 
