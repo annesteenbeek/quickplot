@@ -6,9 +6,8 @@ module.exports = function(grunt) {
         version: '0.12.0', // older version to fix extraction bug
         build_dir: './build',
           mac: false,
-          win: true,
-          linux32: false,
-          linux64: false
+          win: false,
+          linux: true
         },
         src: [
           'src/index.html', 
