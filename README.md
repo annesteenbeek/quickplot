@@ -1,24 +1,40 @@
-# quickplot
+# Quickplot
 Simple node tool to plot serial data for arduino. 
 Made possible by the awsome [node-serialport](https://github.com/voodootikigod/node-serialport) library!
+## Downloading
+To get started right away, you can download the packages [here](https://www.dropbox.com/sh/affs0kikeiiugiv/AABzh9CSijc8Wq6Yxoa1M7Q4a?dl=0).
+(OSx version is still untested)
 
-## installation
+## Features
+- Plot multiple data sets from your micro controller
+- Save the data as a .csv file to, for example, use them in Matlab
+- Set fixed plotting intervals to get (semi) reliable data frequency
+- Simple to use
+
+## Installation
+### Requirements
+- Node
+- Python27
+
+
 To install this package simply clone this repo and then to get started:
 ```
 $ git clone https://github.com/annesteenbeek/quickplot.git # get the repo
 $ cd quickplot # enter directory
 $ npm install # install node dependencies
 $ bower install # install bower files
-# the nodeSerial package needs to be rebuild for using it with NWJS
-$ npm -install -g node-pre-gyp 
+$ npm install -g node-pre-gyp # the nodeSerial package needs to be rebuild for using it with NWJS
 $ cd node_modules/serialport # go into the serialport directory
 $ node-pre-gyp rebuild --runtime=node-webkit --target=0.12.0
 $ cd ../.. # go back to main directory
 $ npm start # to run the plotter
 ```
 
-## building
-Comming soon
+note: For building running on windows, please read the installation requirements for node-serialport on windows on their [page](https://github.com/voodootikigod/node-serialport).
+
+## Building
+If you want to build yourself, edit the `package.js` file to select platforms and run `grunt build` to start the build.
+note: In windows, rename the quickplot.exe executable to nw.exe, [readme](https://github.com/nwjs/nw.js/wiki/using-node-modules)
 
 ## Providing plotting data
 Use the provided arduino library to plot the data.
@@ -34,9 +50,9 @@ plotter.plotValue([Desired name of plot], [pointer to variable], [interval]);
 ```
 
 
-#### simple arduino example
+#### Simple arduino example
 ```
-#include <quickplot.h>
+#include <quickplot.h> // Include the library
 
 int val =  0;
 float data1 = 0;
@@ -58,15 +74,6 @@ void loop() {
 }
 
 ```
-### using basic serial data
-
-
-```
-Serial.print(#name of the data without spaces);
-Serial.print(" ");
-Serial.print(value);
-Serial.print("\n\t");
-```
 
 ## screenshot
 ![missing screenshot](screenshot.png?raw=true "Basic plot of test data")
@@ -76,7 +83,7 @@ Serial.print("\n\t");
 - [x] single executable
 - [x] more robust serial transmission
 - [x] track multiple values in one graph
-- [ ] Download values as .csv files
+- [x] Download values as .csv files
 - [ ] pushing values to the micro controller
 - [ ] add mbed support
 - [ ] use more advanced plotting library (values on hover etc...)
