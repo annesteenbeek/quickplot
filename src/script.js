@@ -10,7 +10,7 @@ var win = gui.Window.get();
 var app = angular.module('quickplot', ["ui.multiselect"]);
 
 app.controller('serial', function($scope){
-  var storageSize = 100;
+  var storageSize = 500;
   var minEntrys = 3; // minimum data points for tracked value to be real
 
   // -------- Setup serial --------

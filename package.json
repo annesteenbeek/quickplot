@@ -10,7 +10,8 @@
   },
   "window": {
     "title": "Quickplot",
-    "width": 1000,
+    "width": 985,
+    "min-width": 797,
     "height": 600,
     "toolbar": false,
     "frame": true,
