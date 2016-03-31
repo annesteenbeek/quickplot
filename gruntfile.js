@@ -6,9 +6,9 @@ module.exports = function(grunt) {
         version: '0.12.0', // older version to fix extraction bug
         build_dir: './build',
           mac: false,
-          win: false,
+          win: true,
           linux32: false,
-          linux64: true
+          linux64: false
         },
         src: [
           'src/index.html', 
@@ -21,18 +21,10 @@ module.exports = function(grunt) {
      },
      wiredep: {
        task: {
-
-         // Point to the files that should be updated when
-         // you run `grunt wiredep`
          src: [
            'src/index.html',   // .html support...
          ],
-
          options: {
-           // See wiredep's configuration documentation for the options
-           // you may pass:
-
-           // https://github.com/taptapship/wiredep#configuration
          }
        }
      }

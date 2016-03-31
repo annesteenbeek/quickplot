@@ -17,6 +17,7 @@
   <script src="bower_components/angular-bootstrap-multiselect/angular-bootstrap-multiselect.js"></script>
   <!-- endbower -->
   <script type="application/javascript" src="script.js"></script>
+  
   <style> 
     .row{
       margin-top: 15px;
@@ -26,7 +27,6 @@
 </head>
 <body ng-app="quickplot" ng-controller="serial" ng-init="init()">
   <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="navbar-header">
       <form class="navbar-form navbar-left form-inline">
           <div class="form-group">
             <label for="portSelector">Port</label>
@@ -44,25 +44,42 @@
               <button ng-switch-when="false" ng-click="openSerial()"class="btn btn-default form-control">Open Serial</button>
               <button ng-switch-when="true" ng-click="closeSerial()"class="btn btn-default active form-control">Close Serial</button>
             </span>
+            <p style="color: red; margin-left: 5px;">{{serialError}}</p>
           </div><!-- /.input-group -->
       </form>
-    </div>
+      <form class="nvabar-form navbar-right form-inline" style="margin-right: 20px; margin-top: 5px">
+      <div class="form-group">
+        <label for="downloadSelector">Download data: </label>
+        <multiselect
+            ng-model="csvDownload"
+            options="a for a in keys"  
+            data-multiple="true"                
+            scroll-after-rows="5"               
+            filter-after-rows="5"               
+            max-width="100"   
+            tabindex="-1">                      
+        </multiselect>
+        <button class="btn btn-primary" ng-click="getCSV()">
+          <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+        </button>
+      </div>
+      </form>
   </nav>
 
   <div class="container" style="margin-top: 20px">
     <div class="page-header">
       <h1>Serial Plotter</h1>
     </div>
-    <div class="col-md-10">
+    <div class="row">
       <div class="row" ng-repeat="key in keys">
-        <div class="col-md-8">
+        <div class="col-md-8 col-sm-8">
           <h3>&nbsp; {{arrayToString(plotLines[key])}}</h3>
           <canvas class="center-block" width="400" height="150" plotname="key" id="{{key}}" ng-init="plotData(key)">
           </canvas>
-          <div class="clearfix"></div><!-- /.clearfix -->
+          <div class="clearfix"></div>
           <div class="row">
-            <div class="col-md-10">
-              <div class="col-md-6">
+            <div class="col-md-10 col-sm-10">
+              <div class="col-md-6 col-sm-6">
                   <div class="input-group">
                       <span class="input-group-addon">Min</span>
                     <input type="text" class="form-control" ng-model="smoothieObj[key].options.minValue"
@@ -70,7 +87,7 @@
                     ng-change="rangeChange(key)">
                   </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6 col-sm-6">
                   <div class="input-group">
                     <span class="input-group-addon">Max</span>
                     <input type="text" class="form-control" ng-model="smoothieObj[key].options.maxValue"
@@ -81,22 +98,18 @@
             </div>
           </div>
         </div>
-        <multiselect
-            ng-model="plotLines[key]"
-            options="a for a in keys"  
-            data-multiple="true"                
-            scroll-after-rows="5"               
-            filter-after-rows="5"               
-            max-width="100"   
-            tabindex="-1">                      
-        </multiselect>
-<!--         <button class="btn btn-danger" ng-click="removeKey(key)">
-          <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-        </button> -->
-
-<!--         <div class="col-md-2">
-          <a class="btn btn-primary" ng-click="getCSV(key)">Download {{key}}</a>
-        </div> -->
+        <div class="col-md-2 col-sm-2">
+          <label for="">Lines:</label>
+          <multiselect
+              ng-model="plotLines[key]"
+              options="a for a in keys"  
+              data-multiple="true"                
+              scroll-after-rows="5"               
+              filter-after-rows="5"               
+              max-width="100"   
+              tabindex="-1">                      
+          </multiselect>
+        </div>
       </div>
     </div>
   </div>

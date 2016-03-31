@@ -5,7 +5,8 @@
   "description": "A super simple plotting tool used for debugging microcontrollers like arduinos",
   "main": "src/index.html",
   "dependencies": {
-    "serialport": "2.0.5"
+    "serialport": "*",
+    "node-webkit-fdialogs": "^0.2.7"
   },
   "window": {
     "title": "Quickplot",
@@ -17,7 +18,7 @@
     "icon": "src/favicon.png"
   },
   "scripts": {
-    "start": "nw ./"
+    "start": "nw"
   },
   "devDependencies": {
     "grunt": "^0.4.2",

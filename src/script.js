@@ -2,6 +2,7 @@
 
 // Load native UI library
 var gui = require('nw.gui'); //or global.window.nwDispatcher.requireNwGui() (see https://github.com/rogerwang/node-webkit/issues/707)
+var fdialogs = require('node-webkit-fdialogs');
 
 // Get the current window
 var win = gui.Window.get();
@@ -28,12 +29,12 @@ app.controller('serial', function($scope){
   $scope.smoothieObj = {};
   var smoothieLines = {};
   var colors = ["#0000FF", "#00FF00", "#FF0000", "#00FFFF", "#FF00FF", "#FFFF00"];
+  $scope.csvDownload = [];
 
-  
-  $scope.dataTables = {};
   $scope.isOpen = false;
   $scope.ports = [];
   $scope.keys = [];
+  $scope.serialError = "";
 
   $scope.baudrates = [
    "300",
@@ -158,37 +159,33 @@ app.controller('serial', function($scope){
   }
 
   // --------------- Download csv ------------
-  $scope.getCSV = function (name){
-    var csvContent = "data:text/csv;charset=utf-8,";
+  $scope.getCSV = function (){
+    var csvContent = [];
     var hasNewArray = true;
     var i = 0;
-    while(hasNewArray){
-      var dataArray = $scope.dataTables[name + String(i)];
-      if(typeof dataArray === 'undefined'){
-        hasNewArray = false;
-      } else {
-        var data = [dataArray]; // take into account multiple arrays
-        data.forEach(function(dataObject, index){ 
-           var dataString = dataObject.join(","); 
-             csvContent += index < dataObject.length ? dataString + "," : dataString;
-             csvContent += "\n";  
-          i++;
-        });
-      }
+    $scope.csvDownload.forEach(function(name, index){
+      var dataArray = [serialData[name]];
+      dataArray.forEach(function(dataObject, index){ 
+        var dataString = dataObject.join(","); 
+        csvContent += index < dataObject.length ? dataString + "," : dataString;
+        csvContent += "\n";  
+      });
+    });
+    var filename = $scope.csvDownload[0];
+    if ($scope.csvDownload.length > 1) {
+      filename = "serialData";
     }
-      var encodedUri = encodeURI(csvContent);
-      // dirty method to set download name
-      var link = document.createElement("a");    
-      link.href = encodedUri;
+    var Dialog = new fdialogs.FDialog({
+        type: 'save',
+        accept: ['.csv'],
+        path: '~/Downloads',
+        defaultSavePath: filename + ".csv"
+      });
 
-      //set the visibility hidden so it will not effect on your web-layout
-      // link.style = "visibility:hidden";
-      link.download = name + ".csv";
-      //this part will append the anchor tag and remove it after automatic click
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      console.log("downlaoded");
+    var content = new Buffer(csvContent, "utf-8");
+    Dialog.saveFile(content, function (err, path) {
+      console.log("file saved in ", path);
+    })
   };
 
   // --------------- Serial port functions -------------
@@ -219,6 +216,7 @@ app.controller('serial', function($scope){
       $scope.closeSerial(); // make sure serial is closed bevore opening it
       serial.open(function (error) { // open the port and handle possible errors
           if ( error ) {
+            $scope.serialError = "" + error;
             console.log('failed to open serial: ' + error);
           } else {
             console.log('opened Serial with baudrate ' + serial.options.baudRate);
@@ -236,6 +234,7 @@ app.controller('serial', function($scope){
       }); 
 
       serial.on('error', function(error){ // handle possible serial error
+        $scope.serialError = "" + error;
         console.log("warning, Serial error: " + error)
       });
 
