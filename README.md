@@ -1,6 +1,5 @@
 # Quickplot
-Simple node tool to plot serial data for arduino. 
-Made possible by the awsome [node-serialport](https://github.com/voodootikigod/node-serialport) library!
+Simple tool to track, visualize and store Arduino serial data. 
 ## Downloading
 To get started right away, you can download the packages [here](https://www.dropbox.com/sh/affs0kikeiiugiv/AABzh9CSijc8Wq6Yxoa1M7Q4a?dl=0).
 (OSx version is still untested)
@@ -12,7 +11,7 @@ To get started right away, you can download the packages [here](https://www.drop
 - Simple to use
 
 ## Installation
-### Requirements
+Requirements
 - Node
 - Python27
 
@@ -36,11 +35,11 @@ note: For building running on windows, please read the installation requirements
 If you want to build yourself, edit the `package.js` file to select platforms and run `grunt build` to start the build.
 note: In windows, rename the quickplot.exe executable to nw.exe, [readme](https://github.com/nwjs/nw.js/wiki/using-node-modules)
 
-## Providing plotting data
+## Using
 Use the provided arduino library to plot the data.
 Basicly all this does is print using a simple specified format but with the library you can also set a specified interval.
-### using the provided library
-First initiate quicplot object
+
+create quickplot object
 ```
 quickplot plotter([serial port reference]);
 ```
@@ -75,7 +74,7 @@ void loop() {
 
 ```
 
-## screenshot
+## Screenshot
 ![missing screenshot](screenshot.png?raw=true "Basic plot of test data")
 
 ## TODO
