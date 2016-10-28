@@ -15,7 +15,7 @@ Quickplot does not need a full installation and is portable.
 ## Developer Installation
 Requirements
 - Node
-- Bowerw
+- Bower
 
 
 To install this package simply clone this repo and then to get started:
