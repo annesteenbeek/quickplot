@@ -1,41 +1,10 @@
 # Quickplot
 Simple tool to track, visualize and store Arduino serial data. 
 ## Quick install
-To get started and run right away, you can download the packages [here](https://www.dropbox.com/sh/affs0kikeiiugiv/AABzh9CSijc8Wq6Yxoa1M7Q4a?dl=0).
+To get started and run right away, you can download the packages [**here**](https://www.dropbox.com/sh/affs0kikeiiugiv/AABzh9CSijc8Wq6Yxoa1M7Q4a?dl=0).
 Quickplot does not need a full installation and is portable.
 
 (OSx version not available, since i don't have a mac available to test or build on)
-
-## Features
-- Plot multiple data sets from your micro controller
-- Save the data as a .csv file to, for example, use them in Matlab
-- Set fixed plotting intervals to get (semi) reliable data frequency
-- Simple to use
-
-## Developer Installation
-Requirements
-- Node
-- Bower
-
-
-To install this package simply clone this repo and then to get started:
-```
-$ git clone https://github.com/annesteenbeek/quickplot.git # get the repo
-$ cd quickplot # enter directory
-$ npm install # install node dependencies
-$ bower install # install bower files
-$ npm install -g node-pre-gyp # the nodeSerial package needs to be rebuild for using it with NWJS
-$ cd node_modules/serialport # go into the serialport directory
-$ node-pre-gyp rebuild --runtime=node-webkit --target=0.12.0
-$ cd ../.. # go back to main directory
-$ npm start # to run the plotter
-```
-
-note: For building running on windows, please read the installation requirements for node-serialport on windows on their [page](https://github.com/voodootikigod/node-serialport).
-
-## Building
-If you want to build yourself, edit the `package.js` file to select platforms and run `grunt build` to start the build.
-note: In windows, rename the quickplot.exe executable to nw.exe, [readme](https://github.com/nwjs/nw.js/wiki/using-node-modules)
 
 ## Using
 Use the provided arduino library to plot the data.
@@ -78,6 +47,38 @@ void loop() {
 
 ## Screenshot
 ![missing screenshot](screenshot.png?raw=true "Basic plot of test data")
+
+## Features
+- Plot multiple data sets from your micro controller
+- Save the data as a .csv file to, for example, use them in Matlab
+- Set fixed plotting intervals to get (semi) reliable data frequency
+- Simple to use
+
+## Developer Installation
+Requirements
+- Node
+- Bower
+
+
+To install this package simply clone this repo and then to get started:
+```
+$ git clone https://github.com/annesteenbeek/quickplot.git # get the repo
+$ cd quickplot # enter directory
+$ npm install # install node dependencies
+$ bower install # install bower files
+$ npm install -g node-pre-gyp # the nodeSerial package needs to be rebuild for using it with NWJS
+$ cd node_modules/serialport # go into the serialport directory
+$ node-pre-gyp rebuild --runtime=node-webkit --target=0.12.0
+$ cd ../.. # go back to main directory
+$ npm start # to run the plotter
+```
+
+note: For building running on windows, please read the installation requirements for node-serialport on windows on their [page](https://github.com/voodootikigod/node-serialport).
+
+## Building
+If you want to build yourself, edit the `package.js` file to select platforms and run `grunt build` to start the build.
+note: In windows, rename the quickplot.exe executable to nw.exe, [readme](https://github.com/nwjs/nw.js/wiki/using-node-modules)
+
 
 ## TODO
 - [x] improve current basic arduino library with multiple data types
